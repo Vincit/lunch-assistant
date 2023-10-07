@@ -2,10 +2,11 @@
   "version": "1.0.0",
   "description": "Lunch assistant for the office",
   "main": "dist/index.js",
+  "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "start": "func start",
-    "test": "echo \"No tests implemented yet\"",
+    "test": "tsc && node ./dist/test.js",
     "invoke": "curl https://lunch-assistant.azurewebsites.net/api/lounas",
     "invokeSlack": "curl https://lunch-assistant.azurewebsites.net/api/slack"
   },
@@ -13,10 +14,14 @@
   "license": "MIT",
   "dependencies": {
     "@azure/functions": "^4.0.1",
-    "axios": "^1.5.1"
+    "axios": "^1.5.1",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.8.3",
+    "eslint": "^8.51.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
