@@ -26,8 +26,7 @@ export async function helloLunchChannelInternal() {
   const prompt = 'Kuvaile alla olevat ruokalajit lyhyesti ja suosittele minulle yhtä niistä. ' + currentDayDishes;
   const completion = await queryOpenAI(openAiUrl, prompt);
 
-  const message = currentDayDishes + '\n' + completion;
-  postToSlack(slackUrl, message);
+  await postToSlack(slackUrl, currentDayDishes, completion);
   return { body: 'Slakkiä spämmätty!' };
 }
 

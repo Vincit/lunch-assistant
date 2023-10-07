@@ -1,12 +1,26 @@
 import axios, { AxiosResponse } from 'axios';
-import { scrapeRssFeed } from './rssScraper'
 import cheerio from 'cheerio'
 const he = require('he');
 
-export const postToSlack = async (slackUrl: string, message: string): Promise<void> => {
+export const postToSlack = async (slackUrl: string, headline: string, message: string): Promise<void> => {
   try {
     const payload = {
-      text: message,
+      blocks: [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": `\`\`\`${headline}\`\`\``
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "plain_text",
+            "text": message
+          }
+        }
+      ]
     };
     const headers = {
       "Content-Type": "application/json",
