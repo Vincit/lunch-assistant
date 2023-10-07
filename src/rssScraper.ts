@@ -90,5 +90,5 @@ export const scrapeRssFeed = async(url: string) => {
 export const getCurrentDayDishes = (lunchList: any): string => {
     const dayIndex = Math.min(new Date().getDay() - 1, 4);
 
-    return lunchList[dayIndex].dishes.reduce((cur: string, agg: string) => agg += cur + '\n', '');
+    return lunchList[dayIndex].dishes.reduce((acc: string, cur: string) => acc += cur + '\n', '');
 }
