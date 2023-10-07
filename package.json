@@ -6,12 +6,14 @@
     "build": "tsc",
     "start": "func start",
     "test": "echo \"No tests implemented yet\"",
-    "invoke": "curl https://lunch-assistant.azurewebsites.net/azurewebsites.net/api/helloWorld1"
+    "invoke": "curl https://lunch-assistant.azurewebsites.net/api/lounas",
+    "invokeSlack": "curl https://lunch-assistant.azurewebsites.net/api/slack"
   },
   "author": "Vincit Kuopio",
   "license": "MIT",
   "dependencies": {
-    "@azure/functions": "^4.0.1"
+    "@azure/functions": "^4.0.1",
+    "axios": "^1.5.1"
   },
   "devDependencies": {
     "@types/node": "^20.8.3",
