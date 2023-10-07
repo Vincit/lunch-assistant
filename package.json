@@ -8,7 +8,8 @@
     "start": "func start",
     "test": "tsc && node ./dist/test.js",
     "invoke": "curl https://lunch-assistant.azurewebsites.net/api/lounas",
-    "invokeSlack": "curl https://lunch-assistant.azurewebsites.net/api/slack"
+    "invokeSlack": "curl https://lunch-assistant.azurewebsites.net/api/slack",
+    "promptOpenAi": "node ./dist/openai.js"
   },
   "author": "Vincit Kuopio",
   "license": "MIT",
