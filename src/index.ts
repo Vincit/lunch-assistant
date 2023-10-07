@@ -32,10 +32,10 @@ export async function timerTrigger1(myTimer: Timer, context: InvocationContext):
   return await helloLunchChannelInternal();
 }
 
-// app.timer('timerTrigger1', {
-//   schedule: '0 */1 * * * *',
-//   handler: timerTrigger1,
-// });
+app.timer('timerTrigger1', {
+  schedule: '0 30 10 * * 1-5',
+  handler: timerTrigger1,
+});
 
 app.http('slack', {
   methods: ['GET', 'POST'],
