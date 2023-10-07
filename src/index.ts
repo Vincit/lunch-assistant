@@ -10,10 +10,11 @@ async function huomenta(request: HttpRequest, context: InvocationContext): Promi
 
 export async function helloLunchChannel(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   const url = process.env.SlackWebHookURL || '';
+  const menuuri = process.env.RestaurantMenuURL || '';
   if (!url) {
     return { body: 'Slack webhook URL not set!' };
   }
-  postToSlack(url, 'Huomenta päiviä Azuresta näläkä olis!');
+  postToSlack(url, menuuri);
   return { body: 'Slakkiä spämmätty!' };
 }
 
