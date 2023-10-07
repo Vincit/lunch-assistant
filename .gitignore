@@ -8,3 +8,6 @@ yarn-error.log
 
 # Optional: Exclude .env files with sensitive data
 .env
+
+# Vim .swp files
+*.swp
