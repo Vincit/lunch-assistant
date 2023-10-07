@@ -4,12 +4,18 @@ import * as dotenv from 'dotenv';
 console.log('Starting testing ...');
 dotenv.config();
 
-const uri = process.env.SlackWebHookURL || '';
-if (!uri) {
+const slackuri = process.env.SlackWebHookURL || '';
+const menuuri = process.env.RestaurantMenuURL || '';
+
+if (!slackuri) {
   console.log('Slack webhook URL not set!');
   process.exit(1);
 }
+if (!menuuri) {
+  console.log('Menu URL not set!');
+  process.exit(1);
+}
 postToSlack(
-  uri,
-  'Huomenta päiviä Azuresta näläkä olis!'
+  slackuri,
+  menuuri
 );
