@@ -1,13 +1,9 @@
-import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import { app, HttpRequest, HttpResponseInit, InvocationContext, Timer } from '@azure/functions';
 import { postToSlack, queryOpenAI } from './lib';
 import { scrapeRssFeed, getCurrentDayDishes } from './rssScraper';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
-
-async function huomenta(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    return { body: 'Huomenta päiviä näläkä olis!' };
-};
 
 export async function helloLunchChannel(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   return await helloLunchChannelInternal();
@@ -26,14 +22,19 @@ export async function helloLunchChannelInternal() {
   const prompt = 'Kuvaile alla olevat ruokalajit lyhyesti ja suosittele minulle yhtä niistä. ' + currentDayDishes;
   const completion = await queryOpenAI(openAiUrl, prompt);
 
-  await postToSlack(slackUrl, currentDayDishes, completion);
+  postToSlack(slackUrl, currentDayDishes, completion);
   return { body: 'Slakkiä spämmätty!' };
 }
 
-app.http('lounas', {
-    methods: ['GET', 'POST'],
-    handler: huomenta
-});
+export async function timerTrigger1(myTimer: Timer, context: InvocationContext): Promise<HttpResponseInit> {
+  context.log('Timer function processed request.');
+  return await helloLunchChannelInternal();
+}
+
+// app.timer('timerTrigger1', {
+//   schedule: '0 */1 * * * *',
+//   handler: timerTrigger1,
+// });
 
 app.http('slack', {
   methods: ['GET', 'POST'],
