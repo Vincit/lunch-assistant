@@ -1,5 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { postToSlack } from './lib';
+import { postToSlack, queryOpenAI } from './lib';
+import { scrapeRssFeed, getCurrentDayDishes } from './rssScraper';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -9,12 +10,24 @@ async function huomenta(request: HttpRequest, context: InvocationContext): Promi
 };
 
 export async function helloLunchChannel(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-  const url = process.env.SlackWebHookURL || '';
-  const menuuri = process.env.RestaurantMenuURL || '';
-  if (!url) {
-    return { body: 'Slack webhook URL not set!' };
+  return await helloLunchChannelInternal();
+}
+
+export async function helloLunchChannelInternal() {
+  const slackUrl = process.env.SlackWebHookURL || '';
+  const restaurantUrl = process.env.RestaurantMenuURL || '';
+  const openAiUrl = process.env.OPENAI_API_URL || ''
+  if (!slackUrl || !restaurantUrl || !openAiUrl) {
+    return { body: 'Slack webhook, OpenAI or restaurant URL not set!' };
   }
-  postToSlack(url, menuuri);
+  const scrapedMenuData: any = await scrapeRssFeed(restaurantUrl);
+  const currentDayDishes = getCurrentDayDishes(scrapedMenuData);
+
+  const prompt = 'Kuvaile alla olevat ruokalajit lyhyesti ja suosittele minulle yhtä niistä. ' + currentDayDishes;
+  const completion = await queryOpenAI(openAiUrl, prompt);
+
+  const message = currentDayDishes + '\n' + completion;
+  postToSlack(slackUrl, message);
   return { body: 'Slakkiä spämmätty!' };
 }
 

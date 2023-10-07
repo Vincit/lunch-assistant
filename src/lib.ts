@@ -3,25 +3,10 @@ import { scrapeRssFeed } from './rssScraper'
 import cheerio from 'cheerio'
 const he = require('he');
 
-export const postToSlack = async (slackUrl: string, menuUrl: string): Promise<void> => {
-  const scrapedMenuData: any = await scrapeRssFeed(menuUrl);
-  const dayIndex = Math.min(new Date().getDay() - 1, 4);
-
-  const daysOfWeek = [
-    "Sunnuntai",
-    "Maanantai",
-    "Tiistai",
-    "Keskiviikko",
-    "Torstai",
-    "Perjantai",
-    "Lauantai",
-  ];
-
-  const currentDayDishes = scrapedMenuData[dayIndex].dishes.reduce((cur: string, agg: string) => agg += cur + '\n', '');
-  const currentDay = daysOfWeek[dayIndex + 1];
+export const postToSlack = async (slackUrl: string, message: string): Promise<void> => {
   try {
     const payload = {
-      text: `Lounasta päivälle ${currentDay}:\n${currentDayDishes}`
+      text: message,
     };
     const headers = {
       "Content-Type": "application/json",
