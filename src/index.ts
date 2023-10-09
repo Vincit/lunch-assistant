@@ -32,8 +32,9 @@ export async function timerTrigger1(myTimer: Timer, context: InvocationContext):
   return await helloLunchChannelInternal();
 }
 
+// Scheduling for 10:30 AM on weekdays, but cloud functions are UTC so 7:30 AM
 app.timer('timerTrigger1', {
-  schedule: '0 30 10 * * 1-5',
+  schedule: '0 30 7 * * 1-5',
   handler: timerTrigger1,
 });
 
