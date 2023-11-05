@@ -21,7 +21,7 @@ export async function helloLunchChannelInternal() {
 
   const prompt = 
     `Kuvaile näitä ruokalajeja lyhyesti mutta hauskasti ja anna suositus mitä syödä. Lisää viestiin ruokalajia kuvaava emoji. ${currentDayDishes} Tähän loppuun hauskasti sanottuna pyyntö reagoida emojilla, jos olet tulossa mukaan syömään!`;
-  const completion = await queryOpenAI(openAiUrl, prompt);
+  const completion = await queryOpenAI(openAiUrl, prompt, currentDayDishes);
 
   postToSlack(slackUrl, currentDayDishes, completion);
   return { body: 'Slakkiä spämmätty!' };

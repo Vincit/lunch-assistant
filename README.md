@@ -5,7 +5,7 @@ Fetches lunch menu from Origo restaurant and asks descriptions and recommendatio
 
 ## Code and CI/CD
 
-Github: https://github.com/Vincit/lunch-assistant. All pushes to `main` branch will trigger GitHub Actions Workflow, which deploys app to Azure Function `lunch-premium`.
+Github: https://github.com/Vincit/lunch-assistant. All pushes to `main` branch will trigger GitHub Actions Workflow, which deploys app to Azure Function `lunch-basic`.
 
 ## Prerequisites
 
@@ -36,10 +36,10 @@ You have to have permissions to Vincit Azure OpenAI Playground.
 
 ## Scheduling
 
-Workdays at 10:30 am.
+Workdays at 10:30 am. Currently not taking daylight saving time into account, so need to update twice a year or find out how to detect DST.
 
 ## Hosting
 
-As Azure Function App called `lunch-premium`. We had to use Premium plan to make integration to OpenAI Playground working.
+As Azure Function App called `lunch-basic`. It is running in Basic App Service Plan. Cheaper consumption plan does not allow VNET, which in turn is needed for OpenAI access.
 
 Manual trigger by HTTP GET: http://lunch-premium.azurewebsites.net/api/slack

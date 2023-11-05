@@ -35,7 +35,7 @@ export const postToSlack = async (slackUrl: string, headline: string, message: s
   }
 };
 
-export const queryOpenAI = async (url: string, prompt: string): Promise<string> => {
+export const queryOpenAI = async (url: string, prompt: string, rawData: string): Promise<string> => {
   try {
     const payload = {
       "messages": [{
@@ -61,7 +61,7 @@ export const queryOpenAI = async (url: string, prompt: string): Promise<string> 
   } catch (error: any) {
     console.log('Error in OpenAI integration!');
     console.log(error.message);
-    return '';
+    return 'Valitettavasti Azure OpenAI ei vastaa, mutta tässä lounaslista sellaisenaan: ' + rawData;
   }
 }
 
