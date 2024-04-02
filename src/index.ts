@@ -20,7 +20,7 @@ export async function helloLunchChannelInternal() {
   const currentDayDishes = getCurrentDayDishes(scrapedMenuData);
 
   const prompt = 
-    `Kuvaile näitä ruokalajeja lyhyesti mutta hauskasti ja anna suositus mitä syödä. Lisää viestiin ruokalajia kuvaava emoji. ${currentDayDishes} Tähän loppuun hauskasti sanottuna pyyntö reagoida emojilla, jos olet tulossa mukaan syömään!`;
+    `Kuvaile näitä ruokalajeja lyhyesti mutta hauskasti ja anna suositus mitä syödä. Lisää viestiin ruokalajia kuvaava emoji. ${currentDayDishes} Tähän loppuun hauskasti sanottuna pyyntö reagoida emojilla, jos olet tulossa mukaan syömään! Jos ravintola on kiinni, älä keksi ruokalajeja vaan jokin kiva päivän teemaan sopiva haiku-runo.`;
   const completion = await queryOpenAI(openAiUrl, prompt);
 
   postToSlack(slackUrl, currentDayDishes, completion);
@@ -35,7 +35,7 @@ export async function timerTrigger1(myTimer: Timer, context: InvocationContext):
 // Scheduling for 10:30 AM on weekdays, but cloud functions are UTC 
 // so 7:30 AM for Finnish summertime and 8:30 AM for Finnish wintertime
 app.timer('timerTrigger1', {
-  schedule: '0 30 8 * * 1-5',
+  schedule: '0 30 7 * * 1-5',
   handler: timerTrigger1,
 });
 
