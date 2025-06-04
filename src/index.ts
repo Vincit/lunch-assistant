@@ -10,6 +10,16 @@ export async function helloLunchChannel(request: HttpRequest, context: Invocatio
 }
 
 export async function helloLunchChannelInternal() {
+  // Check if we should run based on Finnish time
+  const now = new Date();
+  const finnishTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Helsinki' }));
+  const targetHour = 10;
+  const targetMinute = 30;
+
+  if (finnishTime.getHours() !== targetHour || finnishTime.getMinutes() !== targetMinute) {
+    return { body: 'Not the correct Finnish time to run' };
+  }
+
   const slackUrl = process.env.SlackWebHookURL || '';
   const restaurantUrl = process.env.RestaurantMenuURL || '';
   const openAiUrl = process.env.OPENAI_API_URL || ''
@@ -32,10 +42,9 @@ export async function timerTrigger1(myTimer: Timer, context: InvocationContext):
   return await helloLunchChannelInternal();
 }
 
-// Scheduling for 10:30 AM on weekdays, but cloud functions are UTC 
-// so 7:30 AM for Finnish summertime and 8:30 AM for Finnish wintertime
+// Schedule to run at both 7:30 UTC and 8:30 UTC on weekdays to catch 10:30 Finnish time in both DST and non-DST periods
 app.timer('timerTrigger1', {
-  schedule: '0 30 7 * * 1-5',
+  schedule: '0 30 7,8 * * 1-5',
   handler: timerTrigger1,
 });
 
