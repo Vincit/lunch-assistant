@@ -30,7 +30,7 @@ export async function helloLunchChannelInternal() {
   const currentDayDishes = getCurrentDayDishes(scrapedMenuData);
 
   const prompt = 
-    `Kuvaile näitä ruokalajeja lyhyesti mutta hauskasti ja anna suositus mitä syödä. Lisää viestiin ruokalajia kuvaava emoji. ${currentDayDishes} Tähän loppuun hauskasti sanottuna pyyntö reagoida emojilla, jos olet tulossa mukaan syömään!`;
+    `Kuvaile näitä ruokalajeja lyhyesti mutta hauskasti ja anna suositus mitä syödä. Lisää viestiin ruokalajia kuvaava emoji. ${currentDayDishes} Tähän loppuun hauskasti sanottuna pyyntö reagoida emojilla, jos olet tulossa mukaan syömään! Jos ravintola on kiinni, älä keksi ruokalajeja.`;
   const completion = await queryOpenAI(openAiUrl, prompt);
 
   postToSlack(slackUrl, currentDayDishes, completion);
