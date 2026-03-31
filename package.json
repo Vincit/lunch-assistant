@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/he": "^1.2.1",
-    "@types/node": "^20.8.3",
+    "@types/node": "^22.0.0",
     "@types/xml2js": "^0.4.12",
     "eslint": "^8.51.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -33,7 +33,7 @@
     "typescript": "^5.2.2"
   },
   "engines": {
-    "node": ">= 18.x",
+    "node": ">= 22.x",
     "npm": ">= 8.x"
   }
 }
