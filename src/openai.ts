@@ -1,4 +1,7 @@
 import { queryOpenAI } from "./lib";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const url = process.env.OPENAI_API_URL || '';
 const prompt = process.argv[2] ?? 'Say this is a test';

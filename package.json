@@ -8,14 +8,14 @@
     "start": "func start",
     "test": "tsc && node ./dist/test.js",
     "invoke": "curl https://lunch-assistant.azurewebsites.net/api/slack",
-    "deploy": "func azure functionapp publish lunch-premium",
+    "deploy": "func azure functionapp publish lunch-basic",
     "promptOpenAi": "node ./dist/openai.js"
   },
   "author": "Vincit Kuopio",
   "license": "MIT",
   "dependencies": {
     "@azure/functions": "^4.0.1",
-    "axios": "^1.5.1",
+    "axios": "^1.15.0",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
     "he": "^1.2.0",

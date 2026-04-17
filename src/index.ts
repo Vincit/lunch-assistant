@@ -6,17 +6,18 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export async function helloLunchChannel(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-  return await helloLunchChannelInternal();
+  const bypass = request.query.get('bypass') === 'true';
+  return await helloLunchChannelInternal(bypass);
 }
 
-export async function helloLunchChannelInternal() {
+export async function helloLunchChannelInternal(bypassTimeCheck = false) {
   // Check if we should run based on Finnish time
   const now = new Date();
   const finnishTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Helsinki' }));
   const targetHour = 10;
   const targetMinute = 30;
 
-  if (finnishTime.getHours() !== targetHour || finnishTime.getMinutes() !== targetMinute) {
+  if (!bypassTimeCheck && (finnishTime.getHours() !== targetHour || finnishTime.getMinutes() !== targetMinute)) {
     return { body: 'Not the correct Finnish time to run' };
   }
 

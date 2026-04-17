@@ -37,18 +37,24 @@ export const postToSlack = async (slackUrl: string, headline: string, message: s
 
 export const queryOpenAI = async (url: string, prompt: string): Promise<string> => {
   try {
-    const payload = {
-      "messages": [{
-        "role": "user",
-        "content": prompt
-      }],
-      "temperature": 0.7,
-      "top_p": 0.95,
-      "frequency_penalty": 0,
-      "presence_penalty": 0,
-      "max_tokens": 800,
-      "stop": null
-    };
+    const isResponsesApi = /\/responses(\?|$)/.test(url);
+    const payload = isResponsesApi
+      ? {
+          ...(process.env.OPENAI_MODEL ? { model: process.env.OPENAI_MODEL } : {}),
+          input: prompt,
+          stream: false,
+        }
+      : {
+          messages: [{
+            role: 'user',
+            content: prompt,
+          }],
+          temperature: 0.7,
+          top_p: 0.95,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+          max_tokens: 800,
+        };
     const headers = {
       "Content-Type": "application/json",
       "api-key": process.env.OPENAI_API_KEY,
@@ -57,10 +63,24 @@ export const queryOpenAI = async (url: string, prompt: string): Promise<string> 
     console.log('Sending OpenAI request... POST request to: ' + url);
     const response: AxiosResponse = await axios.post(url, payload, { headers });
     console.log(response.status);
-    return response.data.choices[0].message.content;
+
+    const outputText =
+      response.data?.output_text ||
+      response.data?.output?.flatMap((item: any) => item?.content || [])
+        .map((part: any) => part?.text || part?.value || '')
+        .find((text: string) => typeof text === 'string' && text.trim().length > 0) ||
+      response.data?.choices?.[0]?.message?.content;
+
+    if (typeof outputText === 'string' && outputText.trim().length > 0) {
+      return outputText;
+    }
+
+    console.log('OpenAI returned 200 but no text in known response fields.');
+    console.log(JSON.stringify(response.data, null, 2));
+    return 'OpenAI vastasi, mutta tekstisisaltoa ei loytynyt vastauksesta.';
   } catch (error: any) {
     console.log('Error in OpenAI integration!');
-    console.log(error.message);
+    console.log(error);
     return 'Valitettavasti Azure OpenAI ei vastaa, mutta tässä lounaslista sellaisenaan.';
   }
 }
