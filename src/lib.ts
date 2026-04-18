@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { AzureOpenAI } from 'openai';
 import cheerio from 'cheerio'
 const he = require('he');
 
@@ -37,6 +38,42 @@ export const postToSlack = async (slackUrl: string, headline: string, message: s
 
 export const queryOpenAI = async (url: string, prompt: string): Promise<string> => {
   try {
+    const sdkEndpoint = process.env.OPENAI_ENDPOINT;
+    const sdkDeployment = process.env.OPENAI_DEPLOYMENT;
+    const sdkApiVersion = process.env.OPENAI_API_VERSION || '2025-03-01-preview';
+    const sdkApiKey = process.env.OPENAI_API_KEY;
+
+    if (sdkEndpoint && sdkDeployment && sdkApiKey) {
+      console.log('Sending OpenAI request with AzureOpenAI SDK... endpoint: ' + sdkEndpoint + ', deployment: ' + sdkDeployment);
+
+      const client = new AzureOpenAI({
+        endpoint: sdkEndpoint,
+        deployment: sdkDeployment,
+        apiVersion: sdkApiVersion,
+        apiKey: sdkApiKey,
+      });
+
+      const sdkResponse = await client.responses.create({
+        model: sdkDeployment,
+        input: prompt,
+      });
+
+      const sdkOutputText =
+        sdkResponse.output_text ||
+        sdkResponse.output
+          ?.flatMap((item: any) => item?.content || [])
+          .map((part: any) => part?.text || part?.value || '')
+          .find((text: string) => typeof text === 'string' && text.trim().length > 0);
+
+      if (typeof sdkOutputText === 'string' && sdkOutputText.trim().length > 0) {
+        return sdkOutputText;
+      }
+
+      console.log('OpenAI SDK returned 200 but no text in known response fields.');
+      console.log(JSON.stringify(sdkResponse, null, 2));
+      return 'OpenAI vastasi, mutta tekstisisaltoa ei loytynyt vastauksesta.';
+    }
+
     const isResponsesApi = /\/responses(\?|$)/.test(url);
     const payload = isResponsesApi
       ? {
@@ -60,6 +97,7 @@ export const queryOpenAI = async (url: string, prompt: string): Promise<string> 
       "api-key": process.env.OPENAI_API_KEY,
     };
 
+    console.log('OpenAI SDK settings missing, falling back to direct URL mode.');
     console.log('Sending OpenAI request... POST request to: ' + url);
     const response: AxiosResponse = await axios.post(url, payload, { headers });
     console.log(response.status);
@@ -80,7 +118,29 @@ export const queryOpenAI = async (url: string, prompt: string): Promise<string> 
     return 'OpenAI vastasi, mutta tekstisisaltoa ei loytynyt vastauksesta.';
   } catch (error: any) {
     console.log('Error in OpenAI integration!');
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      console.log('OpenAI request failed with AxiosError.');
+      console.log('Request URL: ' + url);
+      console.log('HTTP status: ' + (error.response?.status ?? 'unknown'));
+      console.log('Status text: ' + (error.response?.statusText ?? 'unknown'));
+
+      const requestId =
+        error.response?.headers?.['x-request-id'] ||
+        error.response?.headers?.['apim-request-id'] ||
+        error.response?.headers?.['x-ms-request-id'] ||
+        'unknown';
+
+      console.log('Azure request id: ' + requestId);
+
+      if (error.response?.data) {
+        console.log('OpenAI error response body:');
+        console.log(JSON.stringify(error.response.data, null, 2));
+      } else {
+        console.log('No response body was returned by OpenAI.');
+      }
+    } else {
+      console.log(error);
+    }
     return 'Valitettavasti Azure OpenAI ei vastaa, mutta tässä lounaslista sellaisenaan.';
   }
 }
