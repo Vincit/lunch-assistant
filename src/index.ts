@@ -6,6 +6,14 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export async function helloLunchChannel(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+  const triggerKey = process.env.TRIGGER_KEY;
+  const providedTriggerKey = request.query.get('key') || request.headers.get('x-trigger-key');
+
+  if (triggerKey && providedTriggerKey !== triggerKey) {
+    context.log('Rejected lunch trigger request due to missing or invalid trigger key.');
+    return { status: 401, body: 'Unauthorized' };
+  }
+
   const bypass = request.query.get('bypass') === 'true';
   return await helloLunchChannelInternal(bypass);
 }
@@ -24,8 +32,14 @@ export async function helloLunchChannelInternal(bypassTimeCheck = false) {
   const slackUrl = process.env.SlackWebHookURL || '';
   const restaurantUrl = process.env.RestaurantMenuURL || '';
   const openAiUrl = process.env.OPENAI_API_URL || ''
-  if (!slackUrl || !restaurantUrl || !openAiUrl) {
-    return { body: 'Slack webhook, OpenAI or restaurant URL not set!' };
+  const hasSdkOpenAiConfig = Boolean(
+    process.env.OPENAI_API_KEY &&
+    process.env.OPENAI_ENDPOINT &&
+    process.env.OPENAI_DEPLOYMENT,
+  );
+
+  if (!slackUrl || !restaurantUrl || (!openAiUrl && !hasSdkOpenAiConfig)) {
+    return { body: 'Slack webhook, restaurant URL, or OpenAI configuration not set!' };
   }
   const scrapedMenuData: any = await scrapeRssFeed(restaurantUrl);
   const currentDayDishes = getCurrentDayDishes(scrapedMenuData);

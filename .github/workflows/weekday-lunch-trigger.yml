@@ -1,0 +1,38 @@
+name: Trigger Lunch Bot
+
+on:
+  schedule:
+    - cron: '30 7 * * 1-5'
+    - cron: '30 8 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Helsinki local time
+        id: helsinki-time
+        run: |
+          current_time=$(TZ=Europe/Helsinki date +%H:%M)
+          echo "current_time=$current_time" >> "$GITHUB_OUTPUT"
+
+      - name: Call lunch endpoint
+        if: steps.helsinki-time.outputs.current_time == '10:30'
+        env:
+          LUNCH_BOT_ENDPOINT_URL: ${{ secrets.LUNCH_BOT_ENDPOINT_URL }}
+          LUNCH_BOT_TRIGGER_KEY: ${{ secrets.LUNCH_BOT_TRIGGER_KEY }}
+        run: |
+          if [[ -z "$LUNCH_BOT_ENDPOINT_URL" ]]; then
+            echo "Missing LUNCH_BOT_ENDPOINT_URL secret"
+            exit 1
+          fi
+
+          if [[ -z "$LUNCH_BOT_TRIGGER_KEY" ]]; then
+            echo "Missing LUNCH_BOT_TRIGGER_KEY secret"
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --request POST \
+            --header "x-trigger-key: $LUNCH_BOT_TRIGGER_KEY" \
+            "$LUNCH_BOT_ENDPOINT_URL?bypass=true"
