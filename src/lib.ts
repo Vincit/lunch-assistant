@@ -53,7 +53,7 @@ export const queryOpenAI = async (url: string, prompt: string): Promise<string> 
           top_p: 0.95,
           frequency_penalty: 0,
           presence_penalty: 0,
-          max_tokens: 800,
+          max_completion_tokens: 800,
         };
     const headers = {
       "Content-Type": "application/json",
