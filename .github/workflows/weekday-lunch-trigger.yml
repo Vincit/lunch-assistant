@@ -28,4 +28,4 @@ jobs:
           curl --fail --silent --show-error \
             --request POST \
             --header "x-trigger-key: $LUNCH_BOT_TRIGGER_KEY" \
-            "$LUNCH_BOT_ENDPOINT_URL"
+            "$LUNCH_BOT_ENDPOINT_URL?bypass=true"
