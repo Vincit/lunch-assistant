@@ -2,8 +2,7 @@ name: Trigger Lunch Bot
 
 on:
   schedule:
-    - cron: '30 7 * * 1-5'
-    - cron: '30 8 * * 1-5'
+    - cron: '30 6 * * 1-5'
   workflow_dispatch:
 
 jobs:
