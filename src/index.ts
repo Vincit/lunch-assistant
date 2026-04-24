@@ -58,10 +58,11 @@ export async function timerTrigger1(myTimer: Timer, context: InvocationContext):
 }
 
 // Schedule to run at both 7:30 UTC and 8:30 UTC on weekdays to catch 10:30 Finnish time in both DST and non-DST periods
-app.timer('timerTrigger1', {
-  schedule: '0 30 7,8 * * 1-5',
-  handler: timerTrigger1,
-});
+// Disabling the timer trigger for now to avoid confusion, since the function can be triggered via HTTP with a bypass for time check
+// app.timer('timerTrigger1', {
+//   schedule: '0 30 7,8 * * 1-5',
+//   handler: timerTrigger1,
+// });
 
 app.http('slack', {
   methods: ['GET', 'POST'],
