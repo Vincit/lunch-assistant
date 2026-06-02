@@ -2,7 +2,9 @@ name: Trigger Lunch Bot
 
 on:
   schedule:
-    - cron: '30 6 * * 1-5'
+    # GitHub schedules use UTC. 04:45 UTC is 07:45 EEST (summer) / 06:45 EET (winter).
+    # Running earlier gives buffer for occasional scheduler delays.
+    - cron: '45 4 * * 1-5'
   workflow_dispatch:
 
 jobs:
